@@ -4,7 +4,7 @@ from typing import Iterator, Optional
 
 from lxml import etree
 
-from src.settings.config import XML_GROUP_TAG_NAME
+from src.settings.settings import settings
 from src.xml.parser import EventRecord, GroupEventRecord, parse_group_event
 
 
@@ -81,7 +81,7 @@ def iter_group_events(
     context = etree.iterparse(
         str(xml_path),
         events=("end",),
-        tag=(XML_GROUP_TAG_NAME,),
+        tag=(settings.ini.xml_group_tag_name,),
         recover=recover,
         huge_tree=huge_tree,
     )

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.settings.config import XML_GROUP_TAG_NAME, XML_TAG_NAME
+from src.settings.settings import settings
 
 
 def generate_sample_xml(
@@ -32,17 +32,17 @@ def generate_sample_xml(
         f.write("<xml>\n")
 
         for gid in range(1, groups + 1):
-            f.write(f'  <{XML_GROUP_TAG_NAME} id="{gid}">\n')
+            f.write(f'  <{settings.ini.xml_group_tag_name} id="{gid}">\n')
 
             for _ in range(events_per_group):
                 f.write(
-                    f'    <{XML_TAG_NAME} id="{eid}">'
+                    f'    <{settings.ini.xml_tag_name} id="{eid}">'
                     f"Event {eid}"
-                    f"</{XML_TAG_NAME}>\n"
+                    f"</{settings.ini.xml_tag_name}>\n"
                 )
                 eid += 1
 
-            f.write(f"  </{XML_GROUP_TAG_NAME}>\n")
+            f.write(f"  </{settings.ini.xml_group_tag_name}>\n")
         f.write("</xml>\n")
 
 
