@@ -22,6 +22,7 @@ repos:
       - id: bandit
         args: ["--format", "json", "--quiet"]
         pass_filenames: true
+        exclude: ^tests/
 
   - repo: https://github.com/PyCQA/pydocstyle
     rev: 6.3.0
