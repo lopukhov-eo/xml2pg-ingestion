@@ -1,0 +1,11 @@
+<xml>
+  <group_event id="1">
+    <event id="10">Event Ten</event>
+    <event id="11">Event Eleven</event>
+    <event>Missing id should be skipped</event>
+  </group_event>
+
+  <group_event>
+    <event id="30">Orphan group (no group id) should be skipped</event>
+  </group_event>
+</xml>
