@@ -1,6 +1,7 @@
 from sqlalchemy.engine import Engine
 
 from src.db.models import Base
+from src.settings.settings import settings
 
 
 def init_db(engine: Engine) -> None:
@@ -13,8 +14,16 @@ def init_db(engine: Engine) -> None:
     Base.metadata.create_all(engine)
 
     with engine.begin() as conn:
-        conn.exec_driver_sql("ALTER TABLE IF EXISTS stg_group_event SET UNLOGGED;")
-        conn.exec_driver_sql("ALTER TABLE IF EXISTS stg_event SET UNLOGGED;")
+        conn.exec_driver_sql(
+            f"ALTER TABLE IF EXISTS "
+            f"stg_{settings.ini.groups_table_name} "
+            f"SET UNLOGGED;"
+        )
+        conn.exec_driver_sql(
+            f"ALTER TABLE IF EXISTS "
+            f"stg_{settings.ini.events_table_name} "
+            f"SET UNLOGGED;"
+        )
 
 
 def truncate_staging(engine: Engine) -> None:
@@ -25,5 +34,9 @@ def truncate_staging(engine: Engine) -> None:
     :return: None.
     """
     with engine.begin() as conn:
-        conn.exec_driver_sql("TRUNCATE TABLE stg_event;")
-        conn.exec_driver_sql("TRUNCATE TABLE stg_group_event;")
+        conn.exec_driver_sql(
+            f"TRUNCATE TABLE " f"stg_{settings.ini.events_table_name};"
+        )
+        conn.exec_driver_sql(
+            f"TRUNCATE TABLE " f"stg_{settings.ini.groups_table_name};"
+        )
