@@ -30,14 +30,23 @@ class EnvSettings:
         :raises ConfigError: Если обязательные переменные окружения отсутствуют
                              или имеют некорректный формат.
         """
+        db_url = cls._build_db_url()
+        return cls(db_url=db_url)
+
+    @classmethod
+    def _build_db_url(cls) -> str:
+        """
+        Читает env-параметры подключения и собирает строку подключения к БД.
+
+        :return: строка для подключения к БД.
+        """
         host = cls._required("POSTGRES_HOST")
         port = cls._int("POSTGRES_PORT", default=5432)
         db = cls._required("POSTGRES_DB")
         user = cls._required("POSTGRES_USER")
         password = cls._required("POSTGRES_PASSWORD")
 
-        db_url = f"postgresql+psycopg://{user}:{password}@{host}:{port}/{db}"
-        return cls(db_url=db_url)
+        return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{db}"
 
     @staticmethod
     def _required(name: str) -> str:
