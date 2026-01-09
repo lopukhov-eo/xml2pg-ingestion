@@ -24,6 +24,16 @@ class IniSettings:
 
     xml_tag_name: str
     xml_group_tag_name: str
+    events_table_name: str
+    groups_table_name: str
+
+    # имя_поля_в_классе -> (секция, ключ)
+    _MAP = {
+        "xml_tag_name": ("XML", "xml_tag_name"),
+        "xml_group_tag_name": ("XML", "xml_group_tag_name"),
+        "events_table_name": ("DB", "events_table_name"),
+        "groups_table_name": ("DB", "groups_table_name"),
+    }
 
     @classmethod
     def load(cls, path: Path = CONFIG_PATH) -> "IniSettings":
@@ -38,18 +48,14 @@ class IniSettings:
             raise SettingsError(f"INI файл не найден: {path}")
 
         parser = configparser.ConfigParser()
-        read_ok = parser.read(path)
-        if not read_ok:
-            # на всякий случай: read() иногда может вернуть пусто
+        if not parser.read(path):
             raise SettingsError(f"Не удалось прочитать INI файл: {path}")
 
-        xml_tag_name = cls._required(parser, "XML", "name_tag")
-        xml_group_tag_name = cls._required(parser, "XML", "group_tag_name")
-
-        return cls(
-            xml_tag_name=xml_tag_name,
-            xml_group_tag_name=xml_group_tag_name,
-        )
+        data = {
+            field: cls._required(parser, sec, key, path)
+            for field, (sec, key) in cls._MAP.items()
+        }
+        return cls(**data)
 
     @staticmethod
     def _required(parser: configparser.ConfigParser, section: str, key: str) -> str:
