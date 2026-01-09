@@ -3,6 +3,8 @@ from typing import Optional
 from sqlalchemy import BigInteger, ForeignKey, MetaData, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
+from src.settings.settings import settings
+
 # Configuring Constraint Naming Conventions (SQLAlchemy 2.0 Documentation)
 NAMING_CONVENTION = {
     "ix": "ix_%(table_name)s_%(column_0_name)s",
@@ -34,7 +36,7 @@ class GroupEvent(Base):
     :param name: Название группы событий (может отсутствовать).
     """
 
-    __tablename__ = "group_event"
+    __tablename__ = settings.ini.xml_group_tag_name
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -51,11 +53,11 @@ class Event(Base):
     :param name: Название события (текст внутри XML-тега event).
     """
 
-    __tablename__ = "event"
+    __tablename__ = settings.ini.xml_tag_name
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     group_event_id: Mapped[int] = mapped_column(
-        BigInteger, ForeignKey("group_event.id"), nullable=False
+        BigInteger, ForeignKey(f"{settings.ini.xml_group_tag_name}.id"), nullable=False
     )
     name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
@@ -74,7 +76,7 @@ class StgGroupEvent(Base):
     :param name: Название группы событий.
     """
 
-    __tablename__ = "stg_group_event"
+    __tablename__ = "stg_" + settings.ini.xml_group_tag_name
 
     id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -95,7 +97,7 @@ class StgEvent(Base):
     :param name: Название события.
     """
 
-    __tablename__ = "stg_event"
+    __tablename__ = "stg_" + settings.ini.xml_tag_name
 
     id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     group_event_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
