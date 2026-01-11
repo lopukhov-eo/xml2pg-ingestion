@@ -67,10 +67,11 @@ class IniSettings:
         if not parser.read(path):
             raise SettingsError(f"Не удалось прочитать INI файл: {path}")
 
-        data = {
+        raw_data = {
             field: cls._required(parser, sec, key)
             for field, (sec, key) in cls._MAP.items()
         }
+        data = cls._cast_types(raw_data)
         return cls(**data)
 
     @staticmethod
@@ -110,3 +111,27 @@ class IniSettings:
             )
 
         return value
+
+    @classmethod
+    def _cast_types(cls, raw: dict[str, str]) -> dict[str, object]:
+        """Приводит строковые значения из INI к типам, указанным в аннотациях IniSettings."""
+        result: dict[str, object] = {}
+
+        for field, value in raw.items():
+            target_type = cls.__annotations__[field]
+
+            try:
+                if target_type is bool:
+                    result[field] = value.lower() in {"1", "true", "yes", "on"}
+                elif target_type is int:
+                    result[field] = int(value)
+                elif target_type is float:
+                    result[field] = float(value)
+                else:
+                    result[field] = value
+            except ValueError as e:
+                raise SettingsError(
+                    f"Некорректное значение для '{field}': {value}"
+                ) from e
+
+        return result
