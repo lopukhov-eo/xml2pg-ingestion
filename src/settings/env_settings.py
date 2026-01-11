@@ -1,6 +1,8 @@
 import os
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
 from src.utils.errors import SettingsError
 
 
@@ -30,6 +32,7 @@ class EnvSettings:
         :raises ConfigError: Если обязательные переменные окружения отсутствуют
                              или имеют некорректный формат.
         """
+        load_dotenv()
         db_url = cls._build_db_url()
         return cls(db_url=db_url)
 
