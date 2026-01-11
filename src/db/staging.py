@@ -1,32 +1,19 @@
 from dataclasses import dataclass
-from typing import Any, Iterable, Sequence, Type
+from typing import Any, Iterable, Sequence
 
 from sqlalchemy.engine import Engine
-from sqlalchemy.orm import DeclarativeBase
 
 from src.db.copy import CopySpec, copy_rows
-from src.db.models import StgEvent, StgGroupEvent
 
+STG_GROUP_EVENT_SPEC = CopySpec(
+    table="stg_group_event",
+    columns=("id", "name"),
+)
 
-def copy_spec_from_model(
-    model: Type[DeclarativeBase],
-    *,
-    table: str | None = None,
-    columns: Sequence[str] | None = None,
-) -> CopySpec:
-    """
-    Формирует CopySpec на основе ORM-модели SQLAlchemy.
-
-    :param model: ORM-модель SQLAlchemy.
-    :param table: Явное имя таблицы для COPY.
-    :param columns: Явный список колонок для COPY.
-    Если не задано, используются все колонки таблицы в порядке их объявления.
-    :return: Объект CopySpec (имя таблицы + колонки),
-    готовый для использования в COPY FROM STDIN.
-    """
-    tbl = model.__table__
-    cols = tuple(columns) if columns is not None else tuple(c.name for c in tbl.columns)
-    return CopySpec(table=table or tbl.name, columns=cols)
+STG_EVENT_SPEC = CopySpec(
+    table="stg_event",
+    columns=("id", "group_event_id", "name"),
+)
 
 
 @dataclass(frozen=True)
@@ -37,8 +24,8 @@ class StagingCopySpecs:
     :return: Набор CopySpec для stg_group_event и stg_event.
     """
 
-    group_event: CopySpec = copy_spec_from_model(StgGroupEvent)
-    event: CopySpec = copy_spec_from_model(StgEvent)
+    group_event: CopySpec = STG_GROUP_EVENT_SPEC
+    event: CopySpec = STG_EVENT_SPEC
 
 
 class StagingLoader:
