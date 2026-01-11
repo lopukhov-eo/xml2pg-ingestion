@@ -22,16 +22,24 @@ class IniSettings:
     выбрасывает исключение ConfigError и останавливает работу программы.
     """
 
+    xml_path: str
     xml_tag_name: str
     xml_group_tag_name: str
+    lxml_recover: bool
+    lxml_huge_tree: bool
     events_table_name: str
     groups_table_name: str
+    amount_workers: int
+    queue_maxsize: int
+    batch_max_rows: int
+    batch_max_bytes: int
+    log_interval_sec: float
 
     # имя_поля_в_классе -> (секция, ключ)
     _MAP = {
-        "xml_path": ("XML", "xml_path"),
-        "xml_tag_name": ("XML", "xml_tag_name"),
-        "xml_group_tag_name": ("XML", "xml_group_tag_name"),
+        "xml_path": ("XML", "path"),
+        "xml_tag_name": ("XML", "tag_name"),
+        "xml_group_tag_name": ("XML", "group_tag_name"),
         "lxml_recover": ("XML", "lxml_recover"),
         "lxml_huge_tree": ("XML", "lxml_huge_tree"),
         "events_table_name": ("DB", "events_table_name"),
@@ -60,7 +68,7 @@ class IniSettings:
             raise SettingsError(f"Не удалось прочитать INI файл: {path}")
 
         data = {
-            field: cls._required(parser, sec, key, path)
+            field: cls._required(parser, sec, key)
             for field, (sec, key) in cls._MAP.items()
         }
         return cls(**data)
