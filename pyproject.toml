@@ -8,6 +8,7 @@ dependencies = [
     "asyncpg>=0.31.0",
     "colorlog>=6.10.1",
     "lxml>=6.0.2",
+    "psycopg>=3.3.2",
     "pytest>=9.0.2",
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.45",
