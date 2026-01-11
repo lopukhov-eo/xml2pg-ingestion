@@ -47,7 +47,6 @@ def generate_sample_xml(
 
 
 project_dir = Path(__file__).parent.parent.parent
-fixtures_dir = project_dir / "tests" / "fixtures"
-xml_path = fixtures_dir / "sample.xml"
+xml_path = project_dir / "data" / "sample.xml"
 
 generate_sample_xml(out_path=xml_path, groups=1000000, events_per_group=2)
