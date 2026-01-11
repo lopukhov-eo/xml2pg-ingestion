@@ -1,11 +1,11 @@
 from typing import Optional
 
-from sqlalchemy import BigInteger, ForeignKey, MetaData, Text
+from sqlalchemy import BigInteger, Column, ForeignKey, MetaData, Table, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from src.settings.settings import settings
 
-# Configuring Constraint Naming Conventions (SQLAlchemy 2.0 Documentation)
+# Конфигурация NAMING_CONVENTION (SQLAlchemy 2.0 Documentation)
 NAMING_CONVENTION = {
     "ix": "ix_%(table_name)s_%(column_0_name)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
@@ -62,43 +62,46 @@ class Event(Base):
     name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
 
-class StgGroupEvent(Base):
-    """
-    ORM-модель staging-таблицы stg_group_event.
+"""
+Staging-таблица для групп.
 
-    Используется для быстрой загрузки данных из XML
-    перед переносом в финальную таблицу group_event.
+Используется для быстрой загрузки данных из XML
+перед переносом в финальную таблицу group_event.
 
-    В таблице отсутствуют первичные и внешние ключи
-    для максимальной скорости bulk insert (COPY).
+В таблице отсутствуют первичные и внешние ключи
+для максимальной скорости bulk insert (COPY).
 
-    :param id: Идентификатор группы событий из XML.
-    :param name: Название группы событий.
-    """
+Реализована через Core, 
+т.к. SQLAlchemy ORM не может маппить класс без PRIMARY KEY.
 
-    __tablename__ = "stg_" + settings.ini.xml_group_tag_name
+:param id: Идентификатор группы событий из XML.
+:param name: Название группы событий.
+"""
+stg_group_event = Table(
+    "stg_" + settings.ini.xml_group_tag_name,
+    Base.metadata,
+    Column("id", BigInteger),
+    Column("name", Text),
+)
 
-    id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+"""
+Staging-таблица для событий.
 
-class StgEvent(Base):
-    """
-    ORM-модель staging-таблицы stg_event.
+Используется для быстрой загрузки событий из XML
+перед переносом в финальную таблицу event.
 
-    Используется для быстрой загрузки событий из XML
-    перед переносом в финальную таблицу event.
+Ограничения целостности отсутствуют и проверяются
+на этапе финализации данных.
 
-    Ограничения целостности отсутствуют и проверяются
-    на этапе финализации данных.
-
-    :param id: Идентификатор события из XML.
-    :param group_event_id: Идентификатор родительской группы событий.
-    :param name: Название события.
-    """
-
-    __tablename__ = "stg_" + settings.ini.xml_tag_name
-
-    id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    group_event_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
-    name: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+:param id: Идентификатор события из XML.
+:param group_event_id: Идентификатор родительской группы событий.
+:param name: Название события.
+"""
+stg_event = Table(
+    "stg_" + settings.ini.xml_tag_name,
+    Base.metadata,
+    Column("id", BigInteger),
+    Column("group_event_id", BigInteger),
+    Column("name", Text),
+)
