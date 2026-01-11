@@ -48,12 +48,12 @@ def main() -> None:
     cfg = PipelineConfig(
         xml_path=settings.ini.xml_path,
         workers=settings.ini.amount_workers,
-        queue_maxsize=settings.ini.queue_size,
-        batch_max_rows=settings.ini.batch_rows,
-        batch_max_bytes=settings.ini.batch_bytes,
+        queue_maxsize=settings.ini.queue_maxsize,
+        batch_max_rows=settings.ini.batch_max_rows,
+        batch_max_bytes=settings.ini.batch_max_bytes,
         recover=settings.ini.lxml_recover,
-        huge_tree=settings.ini.huge_tree,
-        log_interval_sec=settings.ini.log_interval,
+        huge_tree=settings.ini.lxml_huge_tree,
+        log_interval_sec=settings.ini.log_interval_sec,
     )
 
     logger.info("Запуск pipeline: %s", cfg)
