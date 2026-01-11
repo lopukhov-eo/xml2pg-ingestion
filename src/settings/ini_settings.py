@@ -29,10 +29,18 @@ class IniSettings:
 
     # имя_поля_в_классе -> (секция, ключ)
     _MAP = {
+        "xml_path": ("XML", "xml_path"),
         "xml_tag_name": ("XML", "xml_tag_name"),
         "xml_group_tag_name": ("XML", "xml_group_tag_name"),
+        "lxml_recover": ("XML", "lxml_recover"),
+        "lxml_huge_tree": ("XML", "lxml_huge_tree"),
         "events_table_name": ("DB", "events_table_name"),
         "groups_table_name": ("DB", "groups_table_name"),
+        "amount_workers": ("PIPELINE", "amount_workers"),
+        "queue_maxsize": ("PIPELINE", "queue_maxsize"),
+        "batch_max_rows": ("PIPELINE", "batch_max_rows"),
+        "batch_max_bytes": ("PIPELINE", "batch_max_bytes"),
+        "log_interval_sec": ("LOG", "log_interval_sec"),
     }
 
     @classmethod
