@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 from src.settings.settings import settings
@@ -46,7 +47,40 @@ def generate_sample_xml(
         f.write("</xml>\n")
 
 
-project_dir = Path(__file__).parent.parent.parent
-xml_path = project_dir / "data" / "sample.xml"
+def main() -> None:
+    """
+    Запуск из терминала функции generate_sample_xml.
 
-generate_sample_xml(out_path=xml_path, groups=1000000, events_per_group=2)
+    :return: None.
+    """
+    parser = argparse.ArgumentParser(description="Generate sample XML file")
+    parser.add_argument(
+        "--out",
+        type=Path,
+        required=True,
+        help="Output XML file path",
+    )
+    parser.add_argument(
+        "--groups",
+        type=int,
+        default=1000,
+        help="Number of <group_event> elements",
+    )
+    parser.add_argument(
+        "--events-per-group",
+        type=int,
+        default=2,
+        help="Number of <event> elements per group",
+    )
+
+    args = parser.parse_args()
+
+    generate_sample_xml(
+        out_path=args.out,
+        groups=args.groups,
+        events_per_group=args.events_per_group,
+    )
+
+
+if __name__ == "__main__":
+    main()
